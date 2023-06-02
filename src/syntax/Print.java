@@ -14,7 +14,7 @@ public class Print extends Instruction {
     }
     @Override
     public void execute() throws UndefinedVariableException, ExpressionArithmeticException {
-        System.out.println(Integer.toString(evaluateAndCatch(expression)));
+        System.out.println(evaluateAndCatch(expression));
     }
     @Override
     public String toString() {

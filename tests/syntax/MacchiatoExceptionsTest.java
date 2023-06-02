@@ -67,7 +67,7 @@ public class MacchiatoExceptionsTest {
         m.execute();
     }
     @Test
-    void exceptionInvalidName() throws Exception {
+    void exceptionInvalidName() {
         assertThrows(InvalidVariableNameException.class, () -> new ForLoop('0', new Constant(2), new Instruction[]{}));
         try {
             new ForLoop('0', new Constant(2), new Instruction[]{});

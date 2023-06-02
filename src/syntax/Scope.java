@@ -1,7 +1,5 @@
 package syntax;
 
-import syntax.exceptions.ExpressionArithmeticException;
-import syntax.exceptions.RepeatedDeclarationException;
 import syntax.exceptions.UndefinedVariableException;
 
 public interface Scope {

@@ -1,11 +1,5 @@
 package syntax;
 
-import syntax.exceptions.ExpressionArithmeticException;
-import syntax.exceptions.RepeatedDeclarationException;
-import syntax.exceptions.UndefinedVariableException;
-
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 

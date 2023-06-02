@@ -45,7 +45,6 @@ class ExpressionTest {
     }
     @Test
     void modulo() throws Exception {
-        Expression e1 = new Addition(new Constant(1), new Modulo(new Constant(4), new Constant(-1)));
         Expression e2 = new Addition(new Constant(1), new Modulo(new Constant(4), new Constant(0)));
         Expression e3 = new Addition(new Constant(1), new Modulo(new Constant(4), new Constant(2)));
         assertThrows(ModuloZeroException.class, () -> e2.evaluate(null));

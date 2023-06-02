@@ -3,8 +3,6 @@ package syntax;
 import expression.*;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class MacchiatoTest {
     @Test
     void forVariableReassign() throws Exception {

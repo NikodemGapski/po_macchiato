@@ -6,7 +6,6 @@ import syntax.exceptions.RepeatedDeclarationException;
 import syntax.exceptions.UndefinedVariableException;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class Block extends ScopeInstruction {
     private final Callable[] instructions;
