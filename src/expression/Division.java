@@ -1,0 +1,27 @@
+package expression;
+
+import expression.exceptions.DivisionByZeroException;
+import expression.exceptions.ExpressionException;
+import syntax.exceptions.NullArgumentException;
+import syntax.Scope;
+import syntax.exceptions.UndefinedVariableException;
+
+public class Division extends Operation {
+    public Division(Expression left, Expression right) throws NullArgumentException {
+        super(left, right);
+    }
+    @Override
+    public int evaluate(Scope scope) throws ExpressionException, UndefinedVariableException {
+        int r = right.evaluate(scope);
+        if(r == 0) throw new DivisionByZeroException();
+        return left.evaluate(scope) / r;
+    }
+    @Override
+    public int rank() {
+        return 2;
+    }
+    @Override
+    public String operator() {
+        return "/";
+    }
+}
