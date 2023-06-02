@@ -98,9 +98,6 @@ public class Debugger {
             handleDisplays(scope);
         }
     }
-    private CommandType getCommand() {
-        return command;
-    }
     public boolean isContinue() {
         return command == CommandType.Continue;
     }
