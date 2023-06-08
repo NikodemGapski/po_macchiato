@@ -17,9 +17,9 @@ public class Assignment extends Instruction {
         this.name = name;
     }
     @Override
-    public void execute() throws UndefinedVariableException, ExpressionArithmeticException {
+    public void execute(Scope scope) throws UndefinedVariableException, ExpressionArithmeticException {
         try {
-            scope.setVariable(name, evaluateAndCatch(expression));
+            scope.setVariable(name, evaluateAndCatch(expression, scope));
         }catch(UndefinedVariableException e) {
             throw new UndefinedVariableException(e.getName() == null ? name : e.getName(), toString(), scope.getVisibleVariables());
         }

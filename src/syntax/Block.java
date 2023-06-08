@@ -5,8 +5,6 @@ import syntax.exceptions.ExpressionArithmeticException;
 import syntax.exceptions.RepeatedDeclarationException;
 import syntax.exceptions.UndefinedVariableException;
 
-import java.util.Arrays;
-
 public class Block extends ScopeInstruction {
     private final Callable[] instructions;
     protected final Integer[] variables;
@@ -19,73 +17,54 @@ public class Block extends ScopeInstruction {
         for(int i = declarations.length; i - declarations.length < instructions.length; ++i) {
             this.instructions[i] = instructions[i - declarations.length];
         }
-        // set scopes and check for null callables
+        // check for null callables
         for(Callable c : this.instructions) {
             if(c == null) throw new NullArgumentException();
-            c.setScope(this);
-        }
-        for(Declaration d : declarations) {
-            d.setBlockScope(this);
         }
         // initialise variables
         variables = new Integer['z' - 'a' + 1];
     }
     @Override
-    public void execute() throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
-        deleteLocals();
+    public void execute(Scope scope) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+        Scope innerScope = new Scope(scope);
+        executeBody(innerScope);
+    }
+    public Scope execute() throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+        Scope innerScope = new Scope();
+        executeBody(innerScope);
+        return innerScope;
+    }
+    private void executeBody(Scope innerScope) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
         for(Callable instruction : instructions) {
-            instruction.execute();
+            instruction.execute(innerScope);
         }
     }
     @Override
-    public void debug(Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
-        deleteLocals();
+    public void debug(Scope scope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+        if(moveStepAndCheckExit(scope, debugger)) return;
+        Scope innerScope = new Scope(scope);
+        debugBody(innerScope, debugger);
+    }
+    public Scope debug(Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
         // got here by the step command
-        if(moveStepAndCheckExit(debugger)) return;
-
+        Scope innerScope = new Scope();
+        if(moveStepAndCheckExit(innerScope, debugger)) return innerScope;
+        debugBody(innerScope, debugger);
+        return innerScope;
+    }
+    private void debugBody(Scope innerScope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
         // execute body instructions
         for(Callable instruction : instructions) {
             if(debugger.isContinue()) {
-                instruction.execute();
+                instruction.execute(innerScope);
             }else {
-                instruction.debug(debugger);
+                instruction.debug(innerScope, debugger);
                 if(debugger.isExit()) return;
             }
         }
 
-        debugger.handleStep(endString(), this);
+        debugger.handleStep(endString(), innerScope);
         if(debugger.isStep()) debugger.moveStep();
-    }
-    @Override
-    public void setVariable(char c, int value) throws UndefinedVariableException {
-        if(variables[c - 'a'] == null) {
-            scope.setVariable(c, value);
-            return;
-        }
-        variables[c - 'a'] = value;
-    }
-    @Override
-    public int getVariable(char c) throws UndefinedVariableException {
-        if(variables[c - 'a'] == null) {
-            return scope.getVariable(c);
-        }
-        return variables[c - 'a'];
-    }
-    public void declareVariable(char c, int value) throws RepeatedDeclarationException {
-        if(variables[c - 'a'] != null) {
-            throw new RepeatedDeclarationException();
-        }
-        variables[c - 'a'] = value;
-    }
-    private void deleteLocals() {
-        Arrays.fill(variables, null);
-    }
-    @Override
-    public void resetRecursive() {
-        deleteLocals();
-        for(Callable instruction : instructions) {
-            instruction.resetRecursive();
-        }
     }
     @Override
     public String toString() {

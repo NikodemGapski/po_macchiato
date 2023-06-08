@@ -10,7 +10,6 @@ import syntax.exceptions.UndefinedVariableException;
 public class Declaration extends Callable {
     private final char name;
     private final Expression expression;
-    private Block blockScope;
     public Declaration(char name, Expression expression) throws InvalidVariableNameException, NullArgumentException {
         if(name < 'a' || name > 'z') throw new InvalidVariableNameException(name);
         if(expression == null) throw new NullArgumentException();
@@ -18,16 +17,16 @@ public class Declaration extends Callable {
         this.name = name;
         this.expression = expression;
     }
-    public void setBlockScope(Block block) {
-        blockScope = block;
-    }
     @Override
-    public void execute() throws RepeatedDeclarationException, ExpressionArithmeticException, UndefinedVariableException {
+    public void execute(Scope scope) throws RepeatedDeclarationException, ExpressionArithmeticException, UndefinedVariableException {
         try {
-            blockScope.declareVariable(name, evaluateAndCatch(expression));
+            scope.declareVariable(name, evaluateAndCatch(expression, scope));
         }catch(RepeatedDeclarationException e) {
             throw new RepeatedDeclarationException(name, toString(), scope.getVisibleVariables());
         }
+    }
+    public char getName() {
+        return name;
     }
     @Override
     public String toString() {

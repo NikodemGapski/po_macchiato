@@ -13,8 +13,8 @@ public class Print extends Instruction {
         this.expression = expression;
     }
     @Override
-    public void execute() throws UndefinedVariableException, ExpressionArithmeticException {
-        System.out.println(evaluateAndCatch(expression));
+    public void execute(Scope scope) throws UndefinedVariableException, ExpressionArithmeticException {
+        System.out.println(evaluateAndCatch(expression, scope));
     }
     @Override
     public String toString() {
