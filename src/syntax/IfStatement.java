@@ -57,7 +57,7 @@ public class IfStatement extends ScopeInstruction {
     @Override
     public void debug(Scope scope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
         // got here by the step command
-        if(moveStepAndCheckExit(scope, debugger)) return;
+        if(debugger.moveStepAndCheckExit(toString(), scope)) return;
 
         int l = evaluateAndCatch(left, scope), r = evaluateAndCatch(right, scope);
         Scope innerScope = new Scope(scope);

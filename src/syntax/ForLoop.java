@@ -39,7 +39,7 @@ public class ForLoop extends ScopeInstruction {
     @Override
     public void debug(Scope scope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
         // got here by the step command
-        if(moveStepAndCheckExit(scope, debugger)) return;
+        if(debugger.moveStepAndCheckExit(toString(), scope)) return;
 
         int count = evaluateAndCatch(repeatCount, scope);
         Scope innerScope = new Scope(scope);
@@ -48,7 +48,7 @@ public class ForLoop extends ScopeInstruction {
         // execute body instructions
         for(int i = 0; i < count; ++i) {
             // got here by the step OR continue command
-            if(i > 0 && moveStepAndCheckExit(innerScope, debugger)) return;
+            if(i > 0 && debugger.moveStepAndCheckExit(toString(), innerScope)) return;
             innerScope.setVariable(variableDeclaration.getName(), i);
 
             for(Instruction instruction : instructions) {

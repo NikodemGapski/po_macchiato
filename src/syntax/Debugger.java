@@ -98,6 +98,15 @@ public class Debugger {
             handleDisplays(scope);
         }
     }
+    // Handle the current step, following displays,
+    // and move step if the next command is step.
+    // Returns true if the next command is exit, false otherwise.
+    public boolean moveStepAndCheckExit(String instructionName, Scope scope) {
+        handleStep(instructionName, scope);
+        if(isExit()) return true;
+        if(isStep()) moveStep();
+        return false;
+    }
     public boolean isContinue() {
         return command == CommandType.Continue;
     }

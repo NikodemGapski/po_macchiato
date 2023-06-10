@@ -41,14 +41,14 @@ public class Block extends ScopeInstruction {
     }
     @Override
     public void debug(Scope scope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
-        if(moveStepAndCheckExit(scope, debugger)) return;
+        if(debugger.moveStepAndCheckExit(toString(), scope)) return;
         Scope innerScope = new Scope(scope);
         debugBody(innerScope, debugger);
     }
     public Scope debug(Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
         // got here by the step command
         Scope innerScope = new Scope();
-        if(moveStepAndCheckExit(innerScope, debugger)) return innerScope;
+        if(debugger.moveStepAndCheckExit(toString(), innerScope)) return innerScope;
         debugBody(innerScope, debugger);
         return innerScope;
     }
