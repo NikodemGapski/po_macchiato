@@ -3,7 +3,7 @@ package syntax;
 import expression.Expression;
 import syntax.exceptions.NullArgumentException;
 import syntax.exceptions.ExpressionArithmeticException;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.UndefinedSymbolException;
 
 public class Print extends Instruction {
     private final Expression expression;
@@ -13,7 +13,7 @@ public class Print extends Instruction {
         this.expression = expression;
     }
     @Override
-    public void execute(Scope scope) throws UndefinedVariableException, ExpressionArithmeticException {
+    public void execute(Scope scope) throws UndefinedSymbolException, ExpressionArithmeticException {
         System.out.println(evaluateAndCatch(expression, scope));
     }
     @Override

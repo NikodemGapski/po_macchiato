@@ -1,17 +1,22 @@
 package syntax;
 
 import syntax.exceptions.RepeatedDeclarationException;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.UndefinedSymbolException;
+
+import java.util.HashMap;
 
 public class Scope {
     private final Integer[] variables;
+    private HashMap<String, Procedure> procedures;
     private final Scope parent;
     public Scope() {
         variables = new Integer['z' - 'a' + 1];
+        procedures = new HashMap<>();
         parent = null;
     }
     public Scope(Scope parent) {
         variables = new Integer['z' - 'a' + 1];
+        procedures = new HashMap<>();
         this.parent = parent;
     }
     public void declareVariable(char c, int value) throws RepeatedDeclarationException {
@@ -20,24 +25,39 @@ public class Scope {
         }
         variables[c - 'a'] = value;
     }
-    public void setVariable(char c, int value) throws UndefinedVariableException {
+    public void setVariable(char c, int value) throws UndefinedSymbolException {
         if(variables[c - 'a'] == null) {
             if(parent == null) {
-                throw new UndefinedVariableException();
+                throw new UndefinedSymbolException();
             }
             parent.setVariable(c, value);
             return;
         }
         variables[c - 'a'] = value;
     }
-    public int getVariable(char c) throws UndefinedVariableException {
+    public int getVariable(char c) throws UndefinedSymbolException {
         if(variables[c - 'a'] == null) {
             if(parent == null) {
-                throw new UndefinedVariableException();
+                throw new UndefinedSymbolException();
             }
             return parent.getVariable(c);
         }
         return variables[c - 'a'];
+    }
+    public void declareProcedure(String name, Procedure procedure) throws RepeatedDeclarationException {
+        if(procedures.containsKey(name)) {
+            throw new RepeatedDeclarationException();
+        }
+        procedures.put(name, procedure);
+    }
+    public Procedure getProcedure(String name) throws UndefinedSymbolException {
+        if(!procedures.containsKey(name)) {
+            if(parent == null) {
+                throw new UndefinedSymbolException();
+            }
+            return parent.getProcedure(name);
+        }
+        return procedures.get(name);
     }
     public String getVisibleVariables() {
         StringBuilder builder = new StringBuilder();
@@ -45,7 +65,7 @@ public class Scope {
             try {
                 int value = getVariable(c);
                 builder.append("int ").append(c).append(": ").append(value).append('\n');
-            }catch (UndefinedVariableException ignored) {}
+            }catch (UndefinedSymbolException ignored) {}
         }
         if(builder.isEmpty()) {
             return "No variables declared.";

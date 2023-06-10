@@ -5,7 +5,7 @@ import syntax.exceptions.NullArgumentException;
 import syntax.exceptions.ExpressionArithmeticException;
 import syntax.exceptions.InvalidVariableNameException;
 import syntax.exceptions.RepeatedDeclarationException;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.UndefinedSymbolException;
 
 public class Declaration extends Callable {
     private final char name;
@@ -18,7 +18,7 @@ public class Declaration extends Callable {
         this.expression = expression;
     }
     @Override
-    public void execute(Scope scope) throws RepeatedDeclarationException, ExpressionArithmeticException, UndefinedVariableException {
+    public void execute(Scope scope) throws RepeatedDeclarationException, ExpressionArithmeticException, UndefinedSymbolException {
         try {
             scope.declareVariable(name, evaluateAndCatch(expression, scope));
         }catch(RepeatedDeclarationException e) {

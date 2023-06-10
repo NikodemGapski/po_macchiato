@@ -1,8 +1,9 @@
 package syntax;
 
 import syntax.exceptions.ExpressionArithmeticException;
+import syntax.exceptions.InvalidParamCountException;
 import syntax.exceptions.RepeatedDeclarationException;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.UndefinedSymbolException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,13 +17,13 @@ public class Procedure {
         this.params = params;
         this.instruction = instruction;
     }
-    public void execute(List<Integer> values, Scope scope) throws ExpressionArithmeticException, RepeatedDeclarationException, UndefinedVariableException {
+    public void execute(List<Integer> values, Scope scope) throws ExpressionArithmeticException, RepeatedDeclarationException, UndefinedSymbolException, InvalidParamCountException {
         // assign argument values to params
         Scope innerScope = createScope(values, scope);
         // execute the code
         instruction.execute(innerScope);
     }
-    public void debug(List<Integer> values, Scope scope, Debugger debugger) throws ExpressionArithmeticException, RepeatedDeclarationException, UndefinedVariableException {
+    public void debug(List<Integer> values, Scope scope, Debugger debugger) throws ExpressionArithmeticException, RepeatedDeclarationException, UndefinedSymbolException, InvalidParamCountException {
         // assign argument value to params
         Scope innerScope = createScope(values, scope);
         // got here by the step command
@@ -31,7 +32,8 @@ public class Procedure {
         if(debugger.isContinue()) instruction.execute(innerScope);
         else instruction.debug(innerScope, debugger);
     }
-    private Scope createScope(List<Integer> values, Scope scope) throws RepeatedDeclarationException {
+    private Scope createScope(List<Integer> values, Scope scope) throws RepeatedDeclarationException, InvalidParamCountException {
+        if(values.size() != params.size()) throw new InvalidParamCountException(values.size(), params.size());
         Scope innerScope = new Scope(scope);
         Iterator<Character> param = params.iterator();
         Iterator<Integer> value = values.iterator();

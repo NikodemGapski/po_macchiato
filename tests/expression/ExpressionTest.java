@@ -3,7 +3,7 @@ package expression;
 import expression.exceptions.DivisionByZeroException;
 import expression.exceptions.ModuloZeroException;
 import org.junit.jupiter.api.Test;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.UndefinedSymbolException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,10 +59,10 @@ class ExpressionTest {
     @Test
     void noArgument() throws Exception {
         Expression e = new Subtraction(new Constant(20), new Variable('a'));
-        assertThrows(UndefinedVariableException.class, () -> e.evaluate(null));
+        assertThrows(UndefinedSymbolException.class, () -> e.evaluate(null));
         try {
             e.evaluate(null);
-        }catch(UndefinedVariableException ex) {
+        }catch(UndefinedSymbolException ex) {
             System.out.println(ex.getMessage());
         }
     }

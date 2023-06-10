@@ -2,11 +2,7 @@ package syntax;
 
 import expression.Constant;
 import expression.Expression;
-import syntax.exceptions.NullArgumentException;
-import syntax.exceptions.ExpressionArithmeticException;
-import syntax.exceptions.InvalidVariableNameException;
-import syntax.exceptions.RepeatedDeclarationException;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.*;
 
 public class ForLoop extends ScopeInstruction {
     private final Expression repeatCount;
@@ -24,7 +20,7 @@ public class ForLoop extends ScopeInstruction {
         }
     }
     @Override
-    public void execute(Scope scope) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    public void execute(Scope scope) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         int count = evaluateAndCatch(repeatCount, scope);
         Scope innerScope = new Scope(scope);
         variableDeclaration.execute(innerScope);
@@ -37,7 +33,7 @@ public class ForLoop extends ScopeInstruction {
         }
     }
     @Override
-    public void debug(Scope scope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    public void debug(Scope scope, Debugger debugger) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         // got here by the step command
         if(debugger.moveStepAndCheckExit(toString(), scope)) return;
 

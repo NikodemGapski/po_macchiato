@@ -1,10 +1,7 @@
 package syntax;
 
 import expression.Expression;
-import syntax.exceptions.NullArgumentException;
-import syntax.exceptions.ExpressionArithmeticException;
-import syntax.exceptions.RepeatedDeclarationException;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.*;
 
 public class IfStatement extends ScopeInstruction {
     private final Expression left, right;
@@ -40,7 +37,7 @@ public class IfStatement extends ScopeInstruction {
         }
     }
     @Override
-    public void execute(Scope scope) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    public void execute(Scope scope) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         int l = evaluateAndCatch(left, scope), r = evaluateAndCatch(right, scope);
         Scope innerScope = new Scope(scope);
 
@@ -55,7 +52,7 @@ public class IfStatement extends ScopeInstruction {
         }
     }
     @Override
-    public void debug(Scope scope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    public void debug(Scope scope, Debugger debugger) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         // got here by the step command
         if(debugger.moveStepAndCheckExit(toString(), scope)) return;
 
