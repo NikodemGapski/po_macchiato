@@ -32,75 +32,63 @@ public class IfStatement extends ScopeInstruction {
         this.otherwise = otherwise;
         for(Instruction i : then) {
             if(i == null) throw new NullArgumentException();
-            i.setScope(this);
         }
         if(otherwise != null) {
             for(Instruction i : otherwise) {
                 if(i == null) throw new NullArgumentException();
-                i.setScope(this);
             }
         }
     }
     @Override
-    public void execute() throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
-        int l = evaluateAndCatch(left, this), r = evaluateAndCatch(right, this);
+    public void execute(Scope scope) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+        int l = evaluateAndCatch(left, scope), r = evaluateAndCatch(right, scope);
+        Scope innerScope = new Scope(scope);
+
         if(checkCondition(l, r)) {
             for(Instruction instruction : then) {
-                instruction.execute();
+                instruction.execute(innerScope);
             }
         }else if(otherwise != null) {
             for(Instruction instruction : otherwise) {
-                instruction.execute();
+                instruction.execute(innerScope);
             }
         }
     }
     @Override
-    public void debug(Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    public void debug(Scope scope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
         // got here by the step command
-        if(moveStepAndCheckExit(debugger)) return;
+        if(moveStepAndCheckExit(scope, debugger)) return;
 
-        int l = evaluateAndCatch(left, this), r = evaluateAndCatch(right, this);
+        int l = evaluateAndCatch(left, scope), r = evaluateAndCatch(right, scope);
+        Scope innerScope = new Scope(scope);
 
         // execute body instructions
         if(checkCondition(l, r)) {
             for(Instruction instruction : then) {
                 if(debugger.isContinue()) {
-                    instruction.execute();
+                    instruction.execute(innerScope);
                 }else {
-                    instruction.debug(debugger);
+                    instruction.debug(innerScope, debugger);
                     if(debugger.isExit()) return;
                 }
             }
         }else if(otherwise != null) {
-            debugger.handleStep("else {", this);
+            debugger.handleStep("else {", scope);
             if(debugger.isExit()) return;
             if(debugger.isStep()) debugger.moveStep();
 
             for(Instruction instruction : otherwise) {
                 if(debugger.isContinue()) {
-                    instruction.execute();
+                    instruction.execute(innerScope);
                 }else {
-                    instruction.debug(debugger);
+                    instruction.debug(innerScope, debugger);
                     if(debugger.isExit()) return;
                 }
             }
         }
 
-        debugger.handleStep(endString(), this);
+        debugger.handleStep(endString(), innerScope);
         if(debugger.isStep()) debugger.moveStep();
-    }
-    @Override
-    public void setVariable(char c, int value) throws UndefinedVariableException {
-        scope.setVariable(c, value);
-    }
-    @Override
-    public int getVariable(char c) throws UndefinedVariableException {
-        return scope.getVariable(c);
-    }
-    // If statement-specific implementation, as if statement doesn't introduce any new variables, thus it is not treated as scope by the user.
-    @Override
-    public String getVisibleVariables(int scopeHeight) {
-        return scope.getVisibleVariables(scopeHeight);
     }
     private boolean checkCondition(int l, int r) {
         return switch (type) {
@@ -121,16 +109,6 @@ public class IfStatement extends ScopeInstruction {
             case Greater -> ">";
             case NotEqual -> "!=";
         };
-    }
-    @Override
-    public void resetRecursive() {
-        for(Instruction instruction : then) {
-            instruction.resetRecursive();
-        }
-        if(otherwise == null) return;
-        for(Instruction instruction : otherwise) {
-            instruction.resetRecursive();
-        }
     }
     @Override
     public String toString() {
