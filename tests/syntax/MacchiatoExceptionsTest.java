@@ -14,10 +14,10 @@ public class MacchiatoExceptionsTest {
     @Test
     void exceptionRepeatedDeclaration() throws Exception {
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('a', new Constant(1)),
-                        new Declaration('b', new Constant(2)),
-                        new Declaration('a', new Constant(1))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('a', new Constant(1)),
+                        new VariableDeclaration('b', new Constant(2)),
+                        new VariableDeclaration('a', new Constant(1))
                 },
                 new Instruction[]{}
         ));
@@ -26,8 +26,8 @@ public class MacchiatoExceptionsTest {
     @Test
     void exceptionUndefineVariable() throws Exception {
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('x', new Constant(-1))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('x', new Constant(-1))
                 },
                 new Instruction[]{
                         new Assignment('x', new Constant(0)),
@@ -39,9 +39,9 @@ public class MacchiatoExceptionsTest {
     @Test
     void exceptionExpressionArithmetic() throws Exception {
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('n', new Constant(0)),
-                        new Declaration('m', new Constant(102))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('n', new Constant(0)),
+                        new VariableDeclaration('m', new Constant(102))
                 },
                 new Instruction[]{
                         new Print(new Division(new Variable('m'), new Variable('n')))
@@ -52,8 +52,8 @@ public class MacchiatoExceptionsTest {
     @Test
     void exceptionExpressionArithmetic2() throws Exception {
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('a', new Constant(1))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('a', new Constant(1))
                 },
                 new Instruction[]{
                         new IfStatement(

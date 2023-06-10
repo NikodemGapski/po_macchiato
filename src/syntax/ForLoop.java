@@ -6,14 +6,14 @@ import syntax.exceptions.*;
 
 public class ForLoop extends ScopeInstruction {
     private final Expression repeatCount;
-    private final Declaration variableDeclaration;
+    private final VariableDeclaration variableDeclaration;
     private final Instruction[] instructions;
     public ForLoop(char variableName, Expression repeatCount, Instruction[] instructions) throws InvalidVariableNameException, NullArgumentException {
         if(variableName < 'a' || variableName > 'z') throw new InvalidVariableNameException(variableName);
         if(repeatCount == null || instructions == null) throw new NullArgumentException();
 
         this.repeatCount = repeatCount;
-        variableDeclaration = new Declaration(variableName, new Constant(0));
+        variableDeclaration = new VariableDeclaration(variableName, new Constant(0));
         this.instructions = instructions;
         for(Instruction i : instructions) {
             if(i == null) throw new NullArgumentException();

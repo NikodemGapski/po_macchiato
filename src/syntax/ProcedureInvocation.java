@@ -1,10 +1,7 @@
 package syntax;
 
 import expression.Expression;
-import syntax.exceptions.ExpressionArithmeticException;
-import syntax.exceptions.InvalidParamCountException;
-import syntax.exceptions.RepeatedDeclarationException;
-import syntax.exceptions.UndefinedSymbolException;
+import syntax.exceptions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +10,9 @@ import java.util.stream.Collectors;
 public class ProcedureInvocation extends Instruction {
     private final String name;
     private final List<Expression> params;
-    public ProcedureInvocation(String name, List<Expression> params) {
+    public ProcedureInvocation(String name, List<Expression> params) throws NullArgumentException {
+        if(name == null || params == null) throw new NullArgumentException();
+
         this.name = name;
         this.params = params;
     }

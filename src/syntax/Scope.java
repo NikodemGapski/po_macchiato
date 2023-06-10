@@ -44,11 +44,11 @@ public class Scope {
         }
         return variables[c - 'a'];
     }
-    public void declareProcedure(String name, Procedure procedure) throws RepeatedDeclarationException {
-        if(procedures.containsKey(name)) {
+    public void declareProcedure(Procedure procedure) throws RepeatedDeclarationException {
+        if(procedures.containsKey(procedure.getName())) {
             throw new RepeatedDeclarationException();
         }
-        procedures.put(name, procedure);
+        procedures.put(procedure.getName(), procedure);
     }
     public Procedure getProcedure(String name) throws UndefinedSymbolException {
         if(!procedures.containsKey(name)) {
