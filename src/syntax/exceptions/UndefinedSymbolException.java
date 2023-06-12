@@ -11,6 +11,6 @@ public class UndefinedSymbolException extends MacchiatoRuntimeException {
         return name;
     }
     protected String specialisedMessage() {
-        return "Variable " + name + " undefined!";
+        return "Symbol " + name + " undefined!";
     }
 }

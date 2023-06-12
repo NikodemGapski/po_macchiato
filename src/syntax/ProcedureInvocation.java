@@ -21,12 +21,11 @@ public class ProcedureInvocation extends Instruction {
         // evaluate parameters
         List<Integer> values = evaluateParams(scope);
         // find and execute the procedure
+        Procedure p = findProcedure(name, scope);
         try {
-            scope.getProcedure(name).execute(values, scope);
-        }catch(UndefinedSymbolException e) {
-            throw new UndefinedSymbolException(name, toString(), scope.getVisibleVariables());
+            p.execute(values, scope);
         }catch(InvalidParamCountException e) {
-            throw new InvalidParamCountException(e, toString(), scope.getVisibleVariables());
+            catchInvalidParamCountException(e, scope);
         }
     }
     @Override
@@ -39,12 +38,11 @@ public class ProcedureInvocation extends Instruction {
         // evaluate parameters
         List<Integer> values = evaluateParams(scope);
         // find and debug the procedure
+        Procedure p = findProcedure(name, scope);
         try {
-            scope.getProcedure(name).debug(values, scope, debugger);
-        }catch(UndefinedSymbolException e) {
-            throw new UndefinedSymbolException(name, toString(), scope.getVisibleVariables());
+            p.debug(values, scope, debugger);
         }catch(InvalidParamCountException e) {
-            throw new InvalidParamCountException(e, toString(), scope.getVisibleVariables());
+            catchInvalidParamCountException(e, scope);
         }
     }
     private List<Integer> evaluateParams(Scope scope) throws ExpressionArithmeticException, UndefinedSymbolException {
@@ -53,6 +51,17 @@ public class ProcedureInvocation extends Instruction {
             values.add(evaluateAndCatch(e, scope));
         }
         return values;
+    }
+    private Procedure findProcedure(String name, Scope scope) throws UndefinedSymbolException {
+        try {
+            return scope.getProcedure(name);
+        }catch(UndefinedSymbolException e) {
+            throw new UndefinedSymbolException(name, toString(), scope.getVisibleVariables());
+        }
+    }
+    private void catchInvalidParamCountException(InvalidParamCountException e, Scope scope) throws InvalidParamCountException {
+        if(e.getInstruction() != null) throw e;
+        throw new InvalidParamCountException(e, toString(), scope.getVisibleVariables());
     }
     @Override
     public String toString() {
