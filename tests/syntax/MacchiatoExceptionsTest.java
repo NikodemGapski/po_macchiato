@@ -37,6 +37,21 @@ public class MacchiatoExceptionsTest {
         m.execute();
     }
     @Test
+    void exceptionUndefinedVariable2() throws Exception {
+        Macchiato m = new Macchiato(new Block(
+                new Declaration[]{
+                        new Declaration('x', new Constant(1))
+                },
+                new Instruction[]{
+                        new IfStatement(new Variable('x'), IfStatement.Type.Equal, new Variable('y'),
+                                new Instruction[]{
+                                        new Print(new Variable('x'))
+                                })
+                }
+        ));
+        m.execute();
+    }
+    @Test
     void exceptionExpressionArithmetic() throws Exception {
         Macchiato m = new Macchiato(new Block(
                 new Declaration[]{

@@ -23,7 +23,7 @@ public class Scope {
     public void setVariable(char c, int value) throws UndefinedVariableException {
         if(variables[c - 'a'] == null) {
             if(parent == null) {
-                throw new UndefinedVariableException();
+                throw new UndefinedVariableException(c);
             }
             parent.setVariable(c, value);
             return;
@@ -33,7 +33,7 @@ public class Scope {
     public int getVariable(char c) throws UndefinedVariableException {
         if(variables[c - 'a'] == null) {
             if(parent == null) {
-                throw new UndefinedVariableException();
+                throw new UndefinedVariableException(c);
             }
             return parent.getVariable(c);
         }
