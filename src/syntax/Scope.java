@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class Scope {
     private final Integer[] variables;
-    private HashMap<String, Procedure> procedures;
+    private final HashMap<String, Procedure> procedures;
     private final Scope parent;
     public Scope() {
         variables = new Integer['z' - 'a' + 1];
@@ -28,7 +28,7 @@ public class Scope {
     public void setVariable(char c, int value) throws UndefinedSymbolException {
         if(variables[c - 'a'] == null) {
             if(parent == null) {
-                throw new UndefinedSymbolException();
+                throw new UndefinedSymbolException(Character.toString(c));
             }
             parent.setVariable(c, value);
             return;
@@ -38,7 +38,7 @@ public class Scope {
     public int getVariable(char c) throws UndefinedSymbolException {
         if(variables[c - 'a'] == null) {
             if(parent == null) {
-                throw new UndefinedSymbolException();
+                throw new UndefinedSymbolException(Character.toString(c));
             }
             return parent.getVariable(c);
         }
@@ -53,7 +53,7 @@ public class Scope {
     public Procedure getProcedure(String name) throws UndefinedSymbolException {
         if(!procedures.containsKey(name)) {
             if(parent == null) {
-                throw new UndefinedSymbolException();
+                throw new UndefinedSymbolException(name);
             }
             return parent.getProcedure(name);
         }

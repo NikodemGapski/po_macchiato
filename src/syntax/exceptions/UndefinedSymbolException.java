@@ -1,8 +1,10 @@
 package syntax.exceptions;
 
 public class UndefinedSymbolException extends MacchiatoRuntimeException {
-    private String name;
-    public UndefinedSymbolException() {}
+    private final String name;
+    public UndefinedSymbolException(String name) {
+        this.name = name;
+    }
     public UndefinedSymbolException(String name, String instruction, String values) {
         super(instruction, values);
         this.name = name;

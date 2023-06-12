@@ -12,7 +12,7 @@ public class Variable implements Expression {
     }
     @Override
     public int evaluate(Scope scope) throws UndefinedSymbolException {
-        if(scope == null) throw new UndefinedSymbolException();
+        if(scope == null) throw new UndefinedSymbolException(Character.toString(name));
         return scope.getVariable(name);
     }
     @Override
