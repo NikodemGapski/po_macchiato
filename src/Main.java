@@ -7,14 +7,14 @@ public class Main {
         Macchiato m = null;
         try {
             m = new Macchiato(new Block(
-                    new Declaration[]{
-                            new Declaration('n', new Constant(30))
+                    new VariableDeclaration[]{
+                            new VariableDeclaration('n', new Constant(30))
                     },
                     new Instruction[]{
                             new ForLoop('k', new Subtraction(new Variable('n'), new Constant(1)), new Instruction[]{
                                     new Block(
-                                            new Declaration[]{
-                                                    new Declaration('p', new Constant(1))
+                                            new VariableDeclaration[]{
+                                                    new VariableDeclaration('p', new Constant(1))
                                             },
                                             new Instruction[]{
                                                     new Assignment('k', new Addition(new Variable('k'), new Constant(2))),

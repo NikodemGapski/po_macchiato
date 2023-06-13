@@ -2,7 +2,7 @@ package expression;
 
 import syntax.Scope;
 import syntax.exceptions.InvalidVariableNameException;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.UndefinedSymbolException;
 
 public class Variable implements Expression {
     private final char name;
@@ -11,8 +11,8 @@ public class Variable implements Expression {
         this.name = name;
     }
     @Override
-    public int evaluate(Scope scope) throws UndefinedVariableException {
-        if(scope == null) throw new UndefinedVariableException(name);
+    public int evaluate(Scope scope) throws UndefinedSymbolException {
+        if(scope == null) throw new UndefinedSymbolException(Character.toString(name));
         return scope.getVariable(name);
     }
     @Override

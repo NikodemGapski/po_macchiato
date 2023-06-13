@@ -14,7 +14,7 @@ public class MacchiatoDebugTest {
     @BeforeAll
     static void prepare() throws NullArgumentException, InvalidVariableNameException {
         forVariableReassign = new Macchiato(new Block(
-                new Declaration[]{},
+                new VariableDeclaration[]{},
                 new Instruction[]{
                         new ForLoop(
                                 'i', new Constant(5),
@@ -26,17 +26,17 @@ public class MacchiatoDebugTest {
                 }
         ));
         allInstructions = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('a', new Constant(2)),
-                        new Declaration('b', new Constant(4))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('a', new Constant(2)),
+                        new VariableDeclaration('b', new Constant(4))
                 },
                 new Instruction[]{
                         new IfStatement(
                                 new Variable('a'), IfStatement.Type.Less, new Variable('b'), new Instruction[]{
                                         new IfStatement(new Variable('a'), IfStatement.Type.Equal, new Variable('b'), new Instruction[]{}, new Instruction[]{
                                                 new Block(
-                                                        new Declaration[]{
-                                                                new Declaration('x', new Constant(1))
+                                                        new VariableDeclaration[]{
+                                                                new VariableDeclaration('x', new Constant(1))
                                                         },
                                                         new Instruction[]{
                                                                 new Print(new Subtraction(new Variable('b'), new Variable('a'))),
@@ -64,9 +64,9 @@ public class MacchiatoDebugTest {
     void exceptionExample() throws Exception {
         setInput("s 1\n".repeat(7));
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('n', new Constant(0)),
-                        new Declaration('m', new Constant(102))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('n', new Constant(0)),
+                        new VariableDeclaration('m', new Constant(102))
                 },
                 new Instruction[]{
                         new Print(new Division(new Variable('m'), new Variable('n')))

@@ -1,9 +1,9 @@
 package syntax.exceptions;
 
 public class RepeatedDeclarationException extends MacchiatoRuntimeException {
-    private char name;
+    private String name;
     public RepeatedDeclarationException() {}
-    public RepeatedDeclarationException(char name, String instruction, String values) {
+    public RepeatedDeclarationException(String name, String instruction, String values) {
         super(instruction, values);
         this.name = name;
     }

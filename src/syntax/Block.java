@@ -1,9 +1,6 @@
 package syntax;
 
-import syntax.exceptions.NullArgumentException;
-import syntax.exceptions.ExpressionArithmeticException;
-import syntax.exceptions.RepeatedDeclarationException;
-import syntax.exceptions.UndefinedVariableException;
+import syntax.exceptions.*;
 
 public class Block extends ScopeInstruction {
     private final Callable[] instructions;
@@ -25,34 +22,34 @@ public class Block extends ScopeInstruction {
         variables = new Integer['z' - 'a' + 1];
     }
     @Override
-    public void execute(Scope scope) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    public void execute(Scope scope) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         Scope innerScope = new Scope(scope);
         executeBody(innerScope);
     }
-    public Scope execute() throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    public Scope execute() throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         Scope innerScope = new Scope();
         executeBody(innerScope);
         return innerScope;
     }
-    private void executeBody(Scope innerScope) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    private void executeBody(Scope innerScope) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         for(Callable instruction : instructions) {
             instruction.execute(innerScope);
         }
     }
     @Override
-    public void debug(Scope scope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
-        if(moveStepAndCheckExit(scope, debugger)) return;
+    public void debug(Scope scope, Debugger debugger) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
+        if(debugger.moveStepAndCheckExit(toString(), scope)) return;
         Scope innerScope = new Scope(scope);
         debugBody(innerScope, debugger);
     }
-    public Scope debug(Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    public Scope debug(Debugger debugger) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         // got here by the step command
         Scope innerScope = new Scope();
-        if(moveStepAndCheckExit(innerScope, debugger)) return innerScope;
+        if(debugger.moveStepAndCheckExit(toString(), innerScope)) return innerScope;
         debugBody(innerScope, debugger);
         return innerScope;
     }
-    private void debugBody(Scope innerScope, Debugger debugger) throws UndefinedVariableException, ExpressionArithmeticException, RepeatedDeclarationException {
+    private void debugBody(Scope innerScope, Debugger debugger) throws UndefinedSymbolException, ExpressionArithmeticException, RepeatedDeclarationException, InvalidParamCountException {
         // execute body instructions
         for(Callable instruction : instructions) {
             if(debugger.isContinue()) {

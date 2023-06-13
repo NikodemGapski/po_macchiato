@@ -11,6 +11,13 @@ public abstract class MacchiatoRuntimeException extends Exception {
         this.instruction = instruction;
         this.values = values;
     }
+    public String getInstruction() {
+        return instruction;
+    }
+    public String getValues() {
+        return values;
+    }
+
     @Override
     public String getMessage() {
         return

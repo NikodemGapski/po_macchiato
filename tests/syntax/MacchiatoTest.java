@@ -7,7 +7,7 @@ class MacchiatoTest {
     @Test
     void forVariableReassign() throws Exception {
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{},
+                new VariableDeclaration[]{},
                 new Instruction[]{
                         new ForLoop(
                                 'i', new Constant(5),
@@ -23,10 +23,10 @@ class MacchiatoTest {
     @Test
     void exampleBinomial() throws Exception {
         Macchiato binomial = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('n', new Constant(9)),
-                        new Declaration('k', new Constant(6)),
-                        new Declaration('x', new Constant(1))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('n', new Constant(9)),
+                        new VariableDeclaration('k', new Constant(6)),
+                        new VariableDeclaration('x', new Constant(1))
                 },
                 new Instruction[]{
                         new ForLoop('i', new Subtraction(new Variable('n'), new Variable('k')),
@@ -53,9 +53,9 @@ class MacchiatoTest {
     void sumOfDigits() throws Exception {
         // int holds at most 10 digits
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('n', new Constant(12389081)),
-                        new Declaration('r', new Constant(0))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('n', new Constant(12389081)),
+                        new VariableDeclaration('r', new Constant(0))
                 },
                 new Instruction[]{
                         new ForLoop('i', new Constant(10),
@@ -73,9 +73,9 @@ class MacchiatoTest {
     @Test
     void forLoopOvershadow() throws Exception {
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('i', new Constant(4)),
-                        new Declaration('r', new Constant(0))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('i', new Constant(4)),
+                        new VariableDeclaration('r', new Constant(0))
                 },
                 new Instruction[]{
                         new ForLoop('k', new Constant(10), new Instruction[]{
@@ -90,8 +90,8 @@ class MacchiatoTest {
     @Test
     void ifElse() throws Exception {
         Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('i', new Constant(1))
+                new VariableDeclaration[]{
+                        new VariableDeclaration('i', new Constant(1))
                 },
                 new Instruction[]{
                         new IfStatement(new Variable('i'), IfStatement.Type.Equal, new Constant(2),
