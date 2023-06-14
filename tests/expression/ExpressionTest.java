@@ -11,31 +11,25 @@ class ExpressionTest {
     @Test
     void evaluateAndPrint() throws Exception {
         // ((((-1) + 2) * 4 % 3) + 24 / 2) / 3 = 4
-        Expression e = new Division(
-                new Addition(
-                        new Modulo(
-                                new Multiplication(
-                                        new Addition(
-                                                new Constant(-1),
-                                                new Constant(2)
-                                        ),
-                                        new Constant(4)
+        Expression e = Division.of(
+                Addition.of(
+                        Modulo.of(
+                                Multiplication.of(
+                                        Addition.of(Constant.of(-1), Constant.of(2)),
+                                        Constant.of(4)
                                 ),
-                                new Constant(3)
+                                Constant.of(3)
                         ),
-                        new Division(
-                                new Constant(24),
-                                new Constant(2)
-                        )
+                        Division.of(Constant.of(24), Constant.of(2))
                 ),
-                new Constant(3)
+                Constant.of(3)
         );
         assertEquals(4, e.evaluate(null));
         assertEquals("((((-1) + 2) * 4 % 3) + 24 / 2) / 3", e.toString());
     }
     @Test
     void divisionByZero() throws Exception {
-        Expression e = new Division(new Constant(20), new Addition(new Constant(-3), new Constant(3)));
+        Expression e = Division.of(Constant.of(20), Addition.of(Constant.of(-3), Constant.of(3)));
         assertThrows(DivisionByZeroException.class, () -> e.evaluate(null));
         try {
             e.evaluate(null);
@@ -45,20 +39,20 @@ class ExpressionTest {
     }
     @Test
     void modulo() throws Exception {
-        Expression e2 = new Addition(new Constant(1), new Modulo(new Constant(4), new Constant(0)));
-        Expression e3 = new Addition(new Constant(1), new Modulo(new Constant(4), new Constant(2)));
-        assertThrows(ModuloZeroException.class, () -> e2.evaluate(null));
-        assertEquals(1, e3.evaluate(null));
+        Expression e1 = Addition.of(Constant.of(1), Modulo.of(Constant.of(4), Constant.of(0)));
+        Expression e2 = Addition.of(Constant.of(1), Modulo.of(Constant.of(4), Constant.of(2)));
+        assertThrows(ModuloZeroException.class, () -> e1.evaluate(null));
+        assertEquals(1, e2.evaluate(null));
 
         try {
-            e2.evaluate(null);
+            e1.evaluate(null);
         }catch(ModuloZeroException ex) {
             System.out.println(ex.getMessage());
         }
     }
     @Test
     void noArgument() throws Exception {
-        Expression e = new Subtraction(new Constant(20), new Variable('a'));
+        Expression e = Subtraction.of(Constant.of(20), Variable.named('a'));
         assertThrows(UndefinedSymbolException.class, () -> e.evaluate(null));
         try {
             e.evaluate(null);

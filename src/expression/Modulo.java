@@ -10,6 +10,9 @@ public class Modulo extends Operation {
     public Modulo(Expression left, Expression right) throws NullArgumentException {
         super(left, right);
     }
+    public static Modulo of(Expression left, Expression right) throws NullArgumentException {
+        return new Modulo(left, right);
+    }
     @Override
     public int evaluate(Scope scope) throws ExpressionException, UndefinedSymbolException {
         int r = right.evaluate(scope);

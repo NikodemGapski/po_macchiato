@@ -1,6 +1,7 @@
 package expression;
 
 import syntax.Scope;
+import syntax.VariableDeclaration;
 import syntax.exceptions.InvalidVariableNameException;
 import syntax.exceptions.UndefinedSymbolException;
 
@@ -9,6 +10,9 @@ public class Variable implements Expression {
     public Variable(char name) throws InvalidVariableNameException {
         if(name < 'a' || name > 'z') throw new InvalidVariableNameException(name);
         this.name = name;
+    }
+    public static Variable named(char name) throws InvalidVariableNameException {
+        return new Variable(name);
     }
     @Override
     public int evaluate(Scope scope) throws UndefinedSymbolException {

@@ -9,6 +9,9 @@ public class Subtraction extends Operation {
     public Subtraction(Expression left, Expression right) throws NullArgumentException {
         super(left, right);
     }
+    public static Subtraction of(Expression left, Expression right) throws NullArgumentException {
+        return new Subtraction(left, right);
+    }
     @Override
     public int evaluate(Scope scope) throws ExpressionException, UndefinedSymbolException {
         return left.evaluate(scope) - right.evaluate(scope);

@@ -7,6 +7,9 @@ public class Constant implements Expression {
     public Constant(int value) {
         this.value = value;
     }
+    public static Constant of(int value) {
+        return new Constant(value);
+    }
     @Override
     public int evaluate(Scope scope) {
         return value;
