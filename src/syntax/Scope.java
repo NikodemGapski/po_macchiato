@@ -4,6 +4,8 @@ import syntax.exceptions.RepeatedDeclarationException;
 import syntax.exceptions.UndefinedSymbolException;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Scope {
     private final Integer[] variables;
@@ -58,6 +60,20 @@ public class Scope {
             return parent.getProcedure(name);
         }
         return procedures.get(name);
+    }
+    public String getVisibleProcedures() {
+        return getVisibleProcedures(new HashSet<>());
+    }
+    // Return a string of all visible procedures in this scope
+    // except for procedures which names are in usedNames.
+    public String getVisibleProcedures(Set<String> usedNames) {
+        StringBuilder builder = new StringBuilder();
+        for(String key : procedures.keySet()) {
+            if(usedNames.contains(key)) continue;
+            usedNames.add(key);
+            builder.append(procedures.get(key)).append('\n');
+        }
+        return builder + (parent == null ? "" : parent.getVisibleProcedures(usedNames));
     }
     public String getVisibleVariables() {
         StringBuilder builder = new StringBuilder();

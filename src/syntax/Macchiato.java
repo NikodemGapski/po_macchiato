@@ -25,7 +25,7 @@ public class Macchiato {
         Scope mainScope = new Scope();
         try {
             debugger.registerNextCommand();
-            debugger.handleDisplays(mainScope);
+            debugger.handleDisplaysAndDumps(mainScope);
             if(debugger.isExit()) return;
             else if(debugger.isContinue()) mainScope = main.execute();
             else {
@@ -39,7 +39,7 @@ public class Macchiato {
 
         // wait for exit
         while(!debugger.isExit()) {
-            debugger.handleDisplays(mainScope);
+            debugger.handleDisplaysAndDumps(mainScope);
             if(debugger.isContinue() || debugger.isStep()) {
                 System.out.println(endString());
                 debugger.registerNextCommand();
