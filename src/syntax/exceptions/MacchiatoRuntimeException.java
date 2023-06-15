@@ -1,6 +1,6 @@
 package syntax.exceptions;
 
-public abstract class MacchiatoRuntimeException extends Exception {
+public abstract class MacchiatoRuntimeException extends MacchiatoException {
     private final String instruction;
     private final String values;
     public MacchiatoRuntimeException() {
