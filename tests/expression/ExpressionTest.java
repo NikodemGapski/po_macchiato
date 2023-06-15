@@ -1,16 +1,63 @@
 package expression;
 
 import expression.exceptions.DivisionByZeroException;
+import expression.exceptions.ExpressionException;
 import expression.exceptions.ModuloZeroException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import syntax.Scope;
+import syntax.exceptions.InvalidVariableNameException;
+import syntax.exceptions.NullArgumentException;
+import syntax.exceptions.RepeatedDeclarationException;
 import syntax.exceptions.UndefinedSymbolException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ExpressionTest {
+    private static Scope scope;
+    @BeforeAll
+    static void setScope() throws RepeatedDeclarationException {
+        scope = new Scope();
+        scope.declareVariable('a', 2);
+        scope.declareVariable('b', 3);
+    }
     @Test
-    void evaluateAndPrint() throws Exception {
-        // ((((-1) + 2) * 4 % 3) + 24 / 2) / 3 = 4
+    void constant() throws UndefinedSymbolException, ExpressionException {
+        Expression e = Constant.of(2);
+        assertEquals(2, e.evaluate(scope));
+    }
+    @Test
+    void addition() throws UndefinedSymbolException, ExpressionException, NullArgumentException {
+        Expression e = Addition.of(Constant.of(2), Constant.of(3));
+        assertEquals(2 + 3, e.evaluate(scope));
+    }
+    @Test
+    void subtraction() throws UndefinedSymbolException, ExpressionException, NullArgumentException {
+        Expression e = Subtraction.of(Constant.of(2), Constant.of(3));
+        assertEquals(2 - 3, e.evaluate(scope));
+    }
+    @Test
+    void multiplication() throws UndefinedSymbolException, ExpressionException, NullArgumentException {
+        Expression e = Multiplication.of(Constant.of(2), Constant.of(3));
+        assertEquals(2 * 3, e.evaluate(scope));
+    }
+    @Test
+    void division() throws UndefinedSymbolException, ExpressionException, NullArgumentException {
+        Expression e = Division.of(Constant.of(7), Constant.of(3));
+        assertEquals(7 / 3, e.evaluate(scope));
+    }
+    @Test
+    void modulo() throws UndefinedSymbolException, ExpressionException, NullArgumentException {
+        Expression e = Modulo.of(Constant.of(7), Constant.of(3));
+        assertEquals(7 % 3, e.evaluate(scope));
+    }
+    @Test
+    void variable() throws UndefinedSymbolException, ExpressionException, InvalidVariableNameException {
+        Expression e = Variable.named('b');
+        assertEquals(scope.getVariable('b'), e.evaluate(scope));
+    }
+    @Test
+    void print() throws UndefinedSymbolException, ExpressionException, NullArgumentException {
         Expression e = Division.of(
                 Addition.of(
                         Modulo.of(
@@ -24,40 +71,31 @@ class ExpressionTest {
                 ),
                 Constant.of(3)
         );
-        assertEquals(4, e.evaluate(null));
+        assertEquals(4, e.evaluate(scope));
         assertEquals("((((-1) + 2) * 4 % 3) + 24 / 2) / 3", e.toString());
     }
     @Test
-    void divisionByZero() throws Exception {
-        Expression e = Division.of(Constant.of(20), Addition.of(Constant.of(-3), Constant.of(3)));
-        assertThrows(DivisionByZeroException.class, () -> e.evaluate(null));
+    void divisionByZero() throws UndefinedSymbolException, ExpressionException, NullArgumentException {
+        Expression e = Division.of(Constant.of(2), Constant.of(0));
+        assertThrows(DivisionByZeroException.class, () -> e.evaluate(scope));
         try {
-            e.evaluate(null);
+            e.evaluate(scope);
         }catch(DivisionByZeroException ex) {
-            System.out.println(ex.getMessage());
+            assertEquals("Cannot divide by zero!", ex.getMessage());
         }
     }
     @Test
-    void modulo() throws Exception {
-        Expression e1 = Addition.of(Constant.of(1), Modulo.of(Constant.of(4), Constant.of(0)));
-        Expression e2 = Addition.of(Constant.of(1), Modulo.of(Constant.of(4), Constant.of(2)));
-        assertThrows(ModuloZeroException.class, () -> e1.evaluate(null));
-        assertEquals(1, e2.evaluate(null));
-
+    void moduloZero() throws UndefinedSymbolException, ExpressionException, NullArgumentException {
+        Expression e = Modulo.of(Constant.of(2), Constant.of(0));
+        assertThrows(ModuloZeroException.class, () -> e.evaluate(scope));
         try {
-            e1.evaluate(null);
+            e.evaluate(scope);
         }catch(ModuloZeroException ex) {
-            System.out.println(ex.getMessage());
+            assertEquals("Cannot take modulo zero!", ex.getMessage());
         }
     }
     @Test
-    void noArgument() throws Exception {
-        Expression e = Subtraction.of(Constant.of(20), Variable.named('a'));
-        assertThrows(UndefinedSymbolException.class, () -> e.evaluate(null));
-        try {
-            e.evaluate(null);
-        }catch(UndefinedSymbolException ex) {
-            System.out.println(ex.getMessage());
-        }
+    void invalidName() {
+        assertThrows(InvalidVariableNameException.class, () -> Variable.named('A'));
     }
 }
