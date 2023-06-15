@@ -25,12 +25,15 @@ public class Procedure {
     }
     public void debug(List<Integer> values, Scope scope, Debugger debugger) throws ExpressionArithmeticException, RepeatedDeclarationException, UndefinedSymbolException, InvalidParamCountException {
         // got here by the step command
-        if(debugger.moveStepAndCheckExit(toString(), scope)) return;
+        if(debugger.moveStepAndCheckExit(this + " {", scope)) return;
         // assign argument value to params
         Scope innerScope = createScope(values, scope);
         // execute the code
         if(debugger.isContinue()) instruction.execute(innerScope);
         else instruction.debug(innerScope, debugger);
+
+        debugger.handleStep(endString(), innerScope);
+        if(debugger.isStep()) debugger.moveStep();
     }
     private Scope createScope(List<Integer> values, Scope scope) throws RepeatedDeclarationException, InvalidParamCountException {
         if(values.size() != params.size()) throw new InvalidParamCountException(values.size(), params.size());
@@ -45,10 +48,10 @@ public class Procedure {
     public String getName() {
         return name;
     }
-    public int paramCount() {
-        return params.size();
-    }
     public String toString() {
         return name + '(' + params.stream().map(Object::toString).collect(Collectors.joining(", ")) + ')';
+    }
+    public String endString() {
+        return "end " + name + " }";
     }
 }

@@ -41,10 +41,11 @@ public class Debugger {
 
             char type = line.charAt(0);
             String rest = line.substring(1).strip();
+            boolean validCommand = line.length() < 2 || line.charAt(1) == ' ';
 
             switch(type) {
                 case 'c' -> {
-                    if(Objects.equals(rest, "")) {
+                    if(validCommand && Objects.equals(rest, "")) {
                         nextCommandChosen = true;
                         command = CommandType.Continue;
                     }else {
@@ -53,6 +54,7 @@ public class Debugger {
                 }
                 case 's' -> {
                     try {
+                        if(!validCommand) throw new Exception();
                         steps = Integer.parseInt(rest);
                         if(steps <= 0) throw new Exception();
                         nextCommandChosen = true;
@@ -63,6 +65,7 @@ public class Debugger {
                 }
                 case 'd' -> {
                     try {
+                        if(!validCommand) throw new Exception();
                         scopeHeight = Integer.parseInt(rest);
                         if(scopeHeight < 0) throw new Exception();
                         nextCommandChosen = true;
@@ -73,6 +76,7 @@ public class Debugger {
                 }
                 case 'm' -> {
                     try {
+                        if(!validCommand) throw new Exception();
                         dumpFilePath = rest;
                         dumpFile = new PrintStream(dumpFilePath);
                         nextCommandChosen = true;
@@ -82,7 +86,7 @@ public class Debugger {
                     }
                 }
                 case 'e' -> {
-                    if(Objects.equals(rest, "")) {
+                    if(validCommand && Objects.equals(rest, "")) {
                         nextCommandChosen = true;
                         command = CommandType.Exit;
                     }else {
