@@ -1,12 +1,11 @@
 package syntax;
 
-import expression.Constant;
-import expression.Division;
-import expression.Modulo;
-import expression.Variable;
+import expression.*;
 import org.junit.jupiter.api.Test;
 import syntax.exceptions.InvalidVariableNameException;
 import syntax.exceptions.MacchiatoCompilationException;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -89,5 +88,17 @@ public class MacchiatoExceptionsTest {
         }catch(MacchiatoCompilationException e) {
             System.out.println(e.getMessage());
         }
+    }
+    @Test
+    void undefinedSymbolExceptionTest() throws Exception {
+        Macchiato m = new Macchiato(new Block(
+                new Declaration[]{
+                        new ProcedureDeclaration(new Procedure("test", List.of('x'), new Print(new Addition(new Variable('x'), new Variable('y')))))
+                },
+                new Instruction[]{
+                        new ProcedureInvocation("test", List.of(new Constant(1)))
+                }
+        ));
+        m.execute();
     }
 }
