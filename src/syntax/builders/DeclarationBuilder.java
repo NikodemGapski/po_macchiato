@@ -2,6 +2,7 @@ package syntax.builders;
 
 import expression.Expression;
 import syntax.*;
+import syntax.exceptions.InvalidProcedureNameException;
 import syntax.exceptions.InvalidVariableNameException;
 import syntax.exceptions.NullArgumentException;
 
@@ -19,7 +20,7 @@ public class DeclarationBuilder {
         declarations.add(new VariableDeclaration(name, expression));
         return this;
     }
-    public DeclarationBuilder procedure(String name, List<Character> params, Instruction instruction) throws NullArgumentException {
+    public DeclarationBuilder procedure(String name, List<Character> params, Instruction instruction) throws NullArgumentException, InvalidProcedureNameException {
         declarations.add(new ProcedureDeclaration(new Procedure(name, params, instruction)));
         return this;
     }
