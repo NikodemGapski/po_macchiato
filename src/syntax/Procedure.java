@@ -10,8 +10,9 @@ public class Procedure {
     private final String name;
     private final List<Character> params;
     private final Instruction instruction;
-    public Procedure(String name, List<Character> params, Instruction instruction) throws NullArgumentException {
+    public Procedure(String name, List<Character> params, Instruction instruction) throws NullArgumentException, InvalidProcedureNameException {
         if(name == null || params == null || instruction == null) throw new NullArgumentException();
+        if(!name.matches("[a-z]+")) throw new InvalidProcedureNameException(name);
 
         this.name = name;
         this.params = params;
