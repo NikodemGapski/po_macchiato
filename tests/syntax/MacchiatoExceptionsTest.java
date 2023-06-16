@@ -136,4 +136,18 @@ public class MacchiatoExceptionsTest {
                         """
         );
     }
+    @Test
+    void invalidName2() {
+        assertThrows(InvalidProcedureNameException.class, () -> new Builder().beginDeclarations().procedure("invalid_name", List.of(), new Print(Constant.of(1))));
+        try {
+            new Builder().beginDeclarations().procedure("invalid_name", List.of(), new Print(Constant.of(1)));
+        }catch(MacchiatoCompilationException e) {
+            System.out.println(e.getMessage());
+        }
+        io.test(
+                """
+                        Procedure names can only contain letters from 'a' to 'z' and be non-empty! Tried to use name: invalid_name
+                        """
+        );
+    }
 }
