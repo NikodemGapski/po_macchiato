@@ -1,6 +1,6 @@
 package syntax.exceptions;
 
-public abstract class MacchiatoRuntimeException extends Exception {
+public abstract class MacchiatoRuntimeException extends MacchiatoException {
     private final String instruction;
     private final String values;
     public MacchiatoRuntimeException() {
@@ -11,6 +11,13 @@ public abstract class MacchiatoRuntimeException extends Exception {
         this.instruction = instruction;
         this.values = values;
     }
+    public String getInstruction() {
+        return instruction;
+    }
+    public String getValues() {
+        return values;
+    }
+
     @Override
     public String getMessage() {
         return

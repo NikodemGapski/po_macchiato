@@ -1,78 +1,153 @@
 package syntax;
 
-import expression.Constant;
-import expression.Division;
-import expression.Modulo;
-import expression.Variable;
+import expression.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import syntax.exceptions.InvalidVariableNameException;
-import syntax.exceptions.MacchiatoCompilationException;
+import syntax.builders.Builder;
+import syntax.builders.InstructionBuilder;
+import syntax.exceptions.*;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MacchiatoExceptionsTest {
-    @Test
-    void exceptionRepeatedDeclaration() throws Exception {
-        Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('a', new Constant(1)),
-                        new Declaration('b', new Constant(2)),
-                        new Declaration('a', new Constant(1))
-                },
-                new Instruction[]{}
-        ));
-        m.execute();
+    private StreamInterceptor io;
+    @BeforeEach
+    void prepare() {
+        io = new StreamInterceptor();
+        io.prepare();
     }
     @Test
-    void exceptionUndefineVariable() throws Exception {
-        Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('x', new Constant(-1))
-                },
-                new Instruction[]{
-                        new Assignment('x', new Constant(0)),
-                        new Assignment('y', new Constant(10))
-                }
-        ));
-        m.execute();
+    void repeatedDeclaration() throws MacchiatoException {
+        Macchiato program = new Builder()
+                .beginDeclarations()
+                    .variable('a', Constant.of(1))
+                    .variable('b', Constant.of(2))
+                    .variable('a', Constant.of(1))
+                .endDeclarations()
+                .buildMacchiato();
+        program.execute();
+        io.test(
+                """
+                        Variable a declared twice!
+                        at instruction: int a = 1;
+                        Visible variables:
+                        int a: 1
+                        int b: 2
+                        """
+        );
     }
     @Test
-    void exceptionExpressionArithmetic() throws Exception {
-        Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('n', new Constant(0)),
-                        new Declaration('m', new Constant(102))
-                },
-                new Instruction[]{
-                        new Print(new Division(new Variable('m'), new Variable('n')))
-                }
-        ));
-        m.execute();
+    void undefinedSymbol() throws MacchiatoException {
+        Macchiato program = new Builder()
+                .beginDeclarations()
+                    .variable('x', Constant.of(-1))
+                .endDeclarations()
+                .beginInstructions()
+                    .assign('x', Constant.of(0))
+                    .assign('y', Constant.of(10))
+                .endInstructions()
+                .buildMacchiato();
+        program.execute();
+        io.test(
+                """
+                        Symbol y undefined!
+                        at instruction: y = 10;
+                        Visible variables:
+                        int x: 0
+                        """
+        );
     }
     @Test
-    void exceptionExpressionArithmetic2() throws Exception {
-        Macchiato m = new Macchiato(new Block(
-                new Declaration[]{
-                        new Declaration('a', new Constant(1))
-                },
-                new Instruction[]{
-                        new IfStatement(
-                                new Constant(0),
-                                IfStatement.Type.Less,
-                                new Modulo(new Variable('a'), new Constant(0)),
-                                new Instruction[]{}
-                        )
-                }
-        ));
-        m.execute();
+    void undefinedSymbol2() throws MacchiatoException {
+        Macchiato program = new Builder()
+                .beginDeclarations()
+                    .variable('x', Constant.of(1))
+                .endDeclarations()
+                .beginInstructions()
+                    .ifStatement(Variable.named('x'), IfStatement.Type.Equal, Variable.named('y'), new InstructionBuilder()
+                        .print(Variable.named('x')).build()
+                    )
+                .endInstructions()
+                .buildMacchiato();
+        program.execute();
+        io.test(
+                """
+                        Symbol y undefined!
+                        at instruction: if(x == y) {
+                        Visible variables:
+                        int x: 1
+                        """
+        );
     }
     @Test
-    void exceptionInvalidName() {
-        assertThrows(InvalidVariableNameException.class, () -> new ForLoop('0', new Constant(2), new Instruction[]{}));
+    void undefinedSymbol3() throws MacchiatoException {
+        Macchiato program = new Builder()
+                .beginDeclarations()
+                .procedure("test", List.of('x'), new Print(Addition.of(Variable.named('x'), Variable.named('y'))))
+                .endDeclarations()
+                .beginInstructions()
+                .invoke("test", List.of(Constant.of(1)))
+                .endInstructions()
+                .buildMacchiato();
+        program.execute();
+        io.test(
+                """
+                        Symbol y undefined!
+                        at instruction: print(x + y);
+                        Visible variables:
+                        int x: 1
+                        """
+        );
+    }
+    @Test
+    void arithmeticException() throws MacchiatoException {
+        Macchiato program = new Builder()
+                .beginDeclarations()
+                    .variable('a', Constant.of(1))
+                .endDeclarations()
+                .beginInstructions()
+                    .ifStatement(Constant.of(0), IfStatement.Type.Less, Modulo.of(Variable.named('a'), Constant.of(0)), new InstructionBuilder().build())
+                .endInstructions()
+                .buildMacchiato();
+        program.execute();
+        io.test(
+                """
+                        Expression exception: Cannot take modulo zero!
+                        at instruction: if(0 < a % 0) {
+                        Visible variables:
+                        int a: 1
+                        """
+        );
+    }
+    @Test
+    void invalidName() {
+        assertThrows(InvalidVariableNameException.class, () -> new Builder().beginInstructions().forLoop('A', new Constant(2), new Instruction[]{}));
         try {
-            new ForLoop('0', new Constant(2), new Instruction[]{});
+            new Builder().beginInstructions().forLoop('A', new Constant(2), new Instruction[]{});
         }catch(MacchiatoCompilationException e) {
             System.out.println(e.getMessage());
         }
+        io.test(
+                """
+                        Variable names must range from 'a' to 'z'! Tried to use name: A
+                        """
+        );
+    }
+    @Test
+    void invalidName2() {
+        assertThrows(InvalidProcedureNameException.class, () -> new Builder().beginDeclarations().procedure("invalid_name", List.of(), new Print(Constant.of(1))));
+        try {
+            new Builder().beginDeclarations().procedure("invalid_name", List.of(), new Print(Constant.of(1)));
+        }catch(MacchiatoCompilationException e) {
+            System.out.println(e.getMessage());
+        }
+        io.test(
+                """
+                        Procedure names can only contain letters from 'a' to 'z' and be non-empty! Tried to use name: invalid_name
+                        """
+        );
     }
 }

@@ -1,4 +1,4 @@
 package syntax.exceptions;
 
-public class MacchiatoCompilationException extends Exception {
+public class MacchiatoCompilationException extends MacchiatoException {
 }
